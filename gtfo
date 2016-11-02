@@ -7,14 +7,15 @@ ACCLOG="/usr/local/nginx/logs/access.log"
 #### GTFO Config ####
 # Install dir
 WORKDIR="/usr/local/GTFO"
-# List of banned IPs
+# Databases
 BANNED="$WORKDIR/banned.ip"
+UNBANNED="$WORKDIR/unbanned.ip"
 # Number of lines to parse
 LINES=100
 # What to ban
 KEYWORDS=("wp-login.php" "administrator/index.php" "../")
 # Time to ban (hours)
-HOURS=1
+HOURS=24
 #####################
 
 IPTABLES="/sbin/iptables"
@@ -45,11 +46,11 @@ BIPS=$(grep -v -f $WORKDIR/tmp.2 $WORKDIR/tmp.1)
 NBIPS=$(echo "$BIPS" | sed '/^$/d' | wc -l)
 
 if [ "$NBIPS" -gt 0 ]; then
-  echo "Banning the following IPs:"
+  echo "Banning new IP addresses..."
 
   # Ban new suspicious IPs
   for IP in $BIPS; do
-    echo "$IP"
+    echo "Banning $IP"
     $IPTABLES -I INPUT 1 -s $IP -j DROP
   done
 
@@ -57,8 +58,9 @@ if [ "$NBIPS" -gt 0 ]; then
   echo "$BIPS" | sed '/^$/d' | sed "s/\$/ $NOW/" >> $BANNED
 fi
 
-# Empty temp file 1
+# Empty temp files
 > $WORKDIR/tmp.1
+> $WORKDIR/tmp.2
 
 echo "Checking for expired bans..."
 
@@ -70,16 +72,19 @@ cat $BANNED | while read LINE; do
   if [ "$XAGO" -ge "$DATE" ]; then
     # Unban current IP
     IP=${L[0]}
-    echo "$IP"
+    echo "Unbanning $IP"
     # Add unbanned IP to temp file
-    echo "$IP" >> $WORKDIR/tmp.1
+    echo "$IP" >> $WORKDIR/tmp.2
     $IPTABLES -D INPUT -s $IP -j DROP
   fi
 done
 
+# Update unbanned IPs (add unbanned)
+cat $WORKDIR/tmp.2 >> $UNBANNED
+
 # Update banned IPs (remove unbanned)
-grep -v -f $WORKDIR/tmp.1 $BANNED > $WORKDIR/tmp.2
-cp $WORKDIR/tmp.2 $BANNED
+grep -v -f $WORKDIR/tmp.2 $BANNED > $WORKDIR/tmp.1
+cp $WORKDIR/tmp.1 $BANNED
 
 # Clean temp files
 rm $WORKDIR/tmp.1
