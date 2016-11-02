@@ -17,6 +17,8 @@ KEYWORDS=("wp-login.php" "administrator/index.php" "../")
 HOURS=1
 #####################
 
+$IPTABLES="/sbin/iptables"
+
 # Get current time
 NOW=$(date +%Y%m%d%H%M)
 DATE=$(date "+%Y-%m-%d %H:%M")
@@ -48,7 +50,7 @@ if [ "$NBIPS" -gt 0 ]; then
   # Ban new suspicious IPs
   for IP in $BIPS; do
     echo "$IP"
-    iptables -I INPUT 1 -s $IP -j DROP
+    $IPTABLES -I INPUT 1 -s $IP -j DROP
   done
 
   # Save new IPs with banned time
@@ -61,7 +63,7 @@ fi
 echo "Checking for expired bans..."
 
 # Unban expired IPs
-cat banned.ip | while read LINE; do
+cat $WORKDIR/banned.ip | while read LINE; do
   L=($LINE)
   DATE=${L[1]}
   # If $DATE is older than $XAGO, time to unban this IP
@@ -71,7 +73,7 @@ cat banned.ip | while read LINE; do
     echo "$IP"
     # Add unbanned IP to temp file
     echo "$IP" >> $WORKDIR/tmp.1
-    iptables -D INPUT -s $IP -j DROP
+    $IPTABLES -D INPUT -s $IP -j DROP
   fi
 done
 
