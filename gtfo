@@ -6,7 +6,7 @@ ACCLOG="/usr/local/nginx/logs/access.log"
 
 #### GTFO Config ####
 # Install dir
-WORKDIR="/usr/local/gtfo"
+WORKDIR="/usr/local/GTFO"
 # List of banned IPs
 BANNED="$WORKDIR/banned.ip"
 # Number of lines to parse
