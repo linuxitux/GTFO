@@ -17,7 +17,7 @@ KEYWORDS=("wp-login.php" "administrator/index.php" "../")
 HOURS=1
 #####################
 
-$IPTABLES="/sbin/iptables"
+IPTABLES="/sbin/iptables"
 
 # Get current time
 NOW=$(date +%Y%m%d%H%M)
@@ -63,7 +63,7 @@ fi
 echo "Checking for expired bans..."
 
 # Unban expired IPs
-cat $WORKDIR/banned.ip | while read LINE; do
+cat $BANNED | while read LINE; do
   L=($LINE)
   DATE=${L[1]}
   # If $DATE is older than $XAGO, time to unban this IP
