@@ -12,7 +12,7 @@ BANNED="$WORKDIR/banned.ip"
 # Number of lines to parse
 LINES=100
 # What to ban
-KEYWORDS=("wp-login.php" "administrator/index.php")
+KEYWORDS=("wp-login.php" "administrator/index.php" "../")
 # Time to ban (hours)
 HOURS=1
 #####################
@@ -29,9 +29,9 @@ echo "GTFO run - $DATE"
 # Empty temp file 1
 > $WORKDIR/tmp.1
 
-# Find new suspicious IPs in error.log
+# Find new suspicious IPs in error.log (using fgrep to avoid regex interpretation)
 for K in ${KEYWORDS[@]}; do
-  tail -n $LINES "$ERRLOG" | grep "$K" | sed -n 's/^.*client: //p' | cut -d',' -f1 | sort | uniq >> $WORKDIR/tmp.1
+  tail -n $LINES "$ERRLOG" | fgrep "$K" | sed -n 's/^.*client: //p' | cut -d',' -f1 | sort | uniq >> $WORKDIR/tmp.1
 done
 
 cut -d' ' -f1 $BANNED > $WORKDIR/tmp.2
