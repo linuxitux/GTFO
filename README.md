@@ -5,8 +5,8 @@ This script scan Apache/Nxing error logs and block IP addresses trying to access
 
 ## Installation
 ```
- git clone https://github.com/linuxitux/GTFO.git
- chmod +x GTFO/gtfo
+# git clone https://github.com/linuxitux/GTFO.git
+# chmod +x GTFO/gtfo
 ```
 Add this to root's crontab:
 ```
@@ -16,11 +16,11 @@ Add this to root's crontab:
 
 Edit the following variables inside gtfo according to your needs:
 
-*ERRLOG - Path to Apache/Nginx error log.
-*WORKDIR - Installation directory.
-*LINES - Number of lines to parse.
-*KEYWORDS - List of patterns to ban.
-*HOURS - Duration of bans (in hours).
+* ERRLOG - Path to Apache/Nginx error log.
+* WORKDIR - Installation directory.
+* LINES - Number of lines to parse.
+* KEYWORDS - List of patterns to ban.
+* HOURS - Duration of bans (in hours).
 
 Example:
 
