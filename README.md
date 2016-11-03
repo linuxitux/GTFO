@@ -10,7 +10,7 @@ This script scan Apache/Nxing error logs and block IP addresses trying to access
 ```
 Add this to root's crontab:
 ```
- */2 * * * * /path/to/GTFO/gtfo > /var/log/gtfo.log
+ */2 * * * * /path/to/GTFO/gtfo >> /var/log/gtfo.log
 ```
 ## Configuration
 
